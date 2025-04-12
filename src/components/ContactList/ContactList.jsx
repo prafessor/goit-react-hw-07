@@ -1,22 +1,26 @@
 import { useSelector } from "react-redux";
+import {
+  selectLoading,
+  selectError,
+  selectFilteredContacts,
+} from "../../redux/contactsSlice";
+import MoonLoader from "react-spinners/MoonLoader";
 import Contact from "../Contact/Contact";
 import css from "./ContactList.module.css";
-
-const getVisibleContacts = (contacts, nameFilter) => {
-  return contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(nameFilter.toLowerCase())
-  );
-};
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 
 export default function ContactList() {
-  const contacts = useSelector((state) => state.contacts.items);
-  const nameFilter = useSelector((state) => state.filters.name);
-
-  const visibleContacts = getVisibleContacts(contacts, nameFilter);
+  const isLoading = useSelector(selectLoading);
+  const isError = useSelector(selectError);
+  const visibleContacts = useSelector(selectFilteredContacts);
 
   return (
     <>
-      {visibleContacts.length === 0 ? (
+      {isLoading ? (
+        <MoonLoader className={css.loader} />
+      ) : isError ? (
+        <ErrorMessage />
+      ) : visibleContacts.length === 0 ? (
         <div className={css.title_wrapper}>
           <span className={css.title}>There is no contact...</span>
         </div>
